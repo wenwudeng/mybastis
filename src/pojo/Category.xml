@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--namespace="pojo"-->
+
+
+<mapper namespace="pojo">
+    <!--这条sql语句用id: listCategory 进行标示以供后续代码调用。
+    resultType="Category" 表示返回的数据和Category关联起来，
+    这里本应该使用的是 pojo.Category,
+    但是因为上一步配置了别名，所以直接使用Category就行了-->
+
+    <!--查找全部-->
+    <select id="listCategory" resultType="Category">
+            select * from   category_
+    </select>
+
+    <!--指定查找-->
+    <select id="getCategory" resultType="Category" parameterType="_int">
+            select * from category_ where id =  #{id}
+    </select>
+
+    <!--增加-->
+    <insert id="addCategory" parameterType="Category">
+        insert into category_ (name) values (#{name })
+    </insert>
+
+    <!--删除-->
+    <delete id="deleteCategory" parameterType="Category">
+        delete from category_ where id = #{id}
+    </delete>
+
+    <!--修改-->
+    <update id="updateCategory" parameterType="Category">
+        update category_ set name=#{name} where id = #{id}
+    </update>
+
+    <!--模糊查询-->
+    <select id="listSelectByName" parameterType="string" resultType="Category">
+        select * from category_ where name like concat ("%",#{name},"%")
+    </select>
+
+    <!--多条件查询-->
+    <select id="listCategoryByNameAndId" parameterType="map" resultType="Category">
+        select * from category_ where id > #{id} and name like concat('%',#{name},'%')
+    </select>
+
+    <!--一对多-->
+    <!--与前面学习的有所区别，这里不是用的resultType, 而是resultMap-->
+    <!--property表示实体集中的字段，column表示数据库列字段名-->
+    <resultMap id="categoryBean" type="Category">
+        <id column="id" property="id"/>
+        <result column="cname" property="name"/>
+
+
+        <!--Category的id 字段 和Product的id字段同名，Mybatis不知道谁是谁的，
+        所以需要通过取别名cid,pid来区分。
+        name字段同理。-->
+
+        <!--collection用于存储查询到的文章列表-->
+        <!--property：指的是Category实体类中的集合对象products，ofType：指的是集合中元素的类型-->
+        <collection property="products" ofType="Product">
+            <!--property表示product实体类中的字段名-->
+            <!--查询到的column值封装在了property中-->
+            <id column="pid" property="id"/>
+            <result column="price" property="price"/>
+            <result column="pname" property="name"/>
+        </collection>
+    </resultMap>
+
+    <!--关联查询分类和产品表-->
+    <select id="oneToManyListCategory" resultMap="categoryBean">
+        select c.*,p.*,c.id 'cid',p.id 'pid',c.name 'cname',p.name 'pname' from
+        category_ c left join product_ p on c.id = p.cid
+    </select>
+
+
+
+</mapper>
