@@ -7,7 +7,15 @@ public class Product {
   private String name;
   private double price;
   private long cid;
+  private Category category;
 
+  public Category getCategory() {
+    return category;
+  }
+
+  public void setCategory(Category category) {
+    this.category = category;
+  }
 
   public long getId() {
     return id;
@@ -50,7 +58,6 @@ public class Product {
             "id=" + id +
             ", name='" + name + '\'' +
             ", price=" + price +
-            ", cid=" + cid +
             '}';
   }
 }

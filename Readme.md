@@ -14,17 +14,21 @@
 - 更多查询  
    1.模糊查询  
    2.多条件查询
-- **一对多**  
-- **多对一**
-- **多对多**
+- 一对多 
+- 多对一
+- 多对多
 
 ## 2.动态SQL
 - if
 - where
-- choose
+- set-在使用update的时候用  
+- trim-用于自定义标签
+- when-otherwise
 - foreach
 - bind
-## 3.注解
+## 3.注解  
+- 注意：使用注解时，在mybatis-config.xml中声明Mapper类的位置时用*class*；声明路径用.而不是/
+   非注解时使用*resource*进行声明，路径用/
 - CRUD
 - 一对多
 - 多对一

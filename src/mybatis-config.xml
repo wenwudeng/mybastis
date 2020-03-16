@@ -26,5 +26,13 @@
     <!--映射声明-->
     <mappers>
         <mapper resource="pojo/Category.xml"/>
+        <mapper resource="pojo/Product.xml"/>
+        <mapper resource="pojo/Order.xml"/>
+        <mapper resource="pojo/OrderItem.xml"/>
+        <mapper class="mapper.CategoryMapper"/><!--mapper用点.，不是/-->
+        <mapper class="mapper.ProductMapper"/><!--mapper用点.，不是/-->
+        <mapper class="mapper.OrderMapper"/><!--mapper用点.，不是/-->
+        <mapper class="mapper.OrderItemMapper"/><!--mapper用点.，不是/-->
+
     </mappers>
 </configuration>

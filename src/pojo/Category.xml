@@ -37,7 +37,7 @@
         update category_ set name=#{name} where id = #{id}
     </update>
 
-    <!--模糊查询-->
+    <!--模糊查询--><!--concat ("%",#{name},"%")-->
     <select id="listSelectByName" parameterType="string" resultType="Category">
         select * from category_ where name like concat ("%",#{name},"%")
     </select>
@@ -46,6 +46,7 @@
     <select id="listCategoryByNameAndId" parameterType="map" resultType="Category">
         select * from category_ where id > #{id} and name like concat('%',#{name},'%')
     </select>
+
 
     <!--一对多-->
     <!--与前面学习的有所区别，这里不是用的resultType, 而是resultMap-->

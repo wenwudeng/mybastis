@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pojo">
+    <!--多对一-->
+    <resultMap id="productBean" type="Product">
+        <id column="pid" property="id"/>
+        <result column="pname" property="name"/>
+        <result column="price" property="price"/>
+
+        <!--多对一的关系，使用association进行多对一关联，
+        指定表字段名称和和对象属性名称的一一对应关系-->
+        <association property="category" javaType="Category">
+            <id column="cid" property="id"/>
+            <result column="cname" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="listProduct" resultMap="productBean">
+        select c.*,p.*,c.id 'cid',p.id 'pid',c.name 'cname',p.name 'pname'
+        from category_ c left join product_ p
+        on c.id = p.id
+    </select>
+
+    <select id="getProduct" resultMap="productBean">
+            select c.*, p.*, c.id 'cid', p.id 'pid', c.name 'cname', p.name 'pname'
+                from category_ c
+                left join product_ p on c.id = p.cid
+            where p.id = #{id}
+    </select>
+
+
+    <!--动态SQL-if-->
+    <select id="ifListProduct" resultType="Product">
+        select * from product_
+        <if test="name!=null">
+            where name like concat('%',#{name},'%')
+        </if>
+    </select>
+
+    <!--动态SQL-where-->
+    <!--<where>标签会进行自动判断
+    如果任何条件都不成立，那么就在sql语句里就不会出现where关键字
+    如果有任何条件成立，会自动去掉多出来的 and 或者 or。-->
+    <select id="whereListProduct" resultType="Product">
+        select * from product_
+
+        <where>
+            <if test="name!=null">
+                and name like concat('%',#{name},'%')
+            </if>
+
+            <if test="prices!=null and price!=0">
+                and price > #{price}
+            </if>
+        </where>
+
+    </select>
+
+    <!--动态SQL-set-->
+    <update id="setUpdateProduct" parameterType="Product">
+        update product_
+        <set>
+            <if test="name != null">name=#{name},</if>
+            <if test="price != null">price=#{price}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--动态SQL-when-otherwise-->
+    <!--其作用是： 提供了任何条件，就进行条件查询，否则就使用id>1这个条件。-->
+    <select id="whenListProduct" resultType="Product">
+        select * from product_
+        <where>
+            <choose>
+                <when test="name!=null">
+                    and name like concat('%',#{name},'%')
+                </when>
+                <when test="price!=null and price != 0">
+                    and price >#{price}
+                </when>
+                <otherwise>
+                    and id >1
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <!--动态SQL-foreach-->
+    <!--作用与in这样的语法里-->
+    <select id="foreachListProduct" resultType="Product">
+        select * from product_ where ID in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close = ")">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <!--动态SQL-bind-->
+    <!--bind标签就像是再做一次字符串拼接，方便后续使用
+    如本例，在模糊查询的基础上，把模糊查询改为bind标签。-->
+
+    <select id="bindListProduct" resultType="Product">
+        <!--模糊查询-->
+        <!--         <select id="listProduct" resultType="Product"> -->
+        <!--             select * from   product_  where name like concat('%',#{0},'%') -->
+        <!--         </select> -->
+
+        <bind name="likeName" value="'%'+name+'%'"/>
+        select * from product_  where name like #{likeName}
+    </select>
+</mapper>
